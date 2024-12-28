@@ -1,22 +1,23 @@
-import express from "express";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-import cors from "cors";
-import userRouter from "./routes/user.route.js";
-import authRouter from "./routes/auth.route.js";
-dotenv.config({ path: "./.env" });
+import express from 'express';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import userRouter from './routes/user.route.js';
+import authRouter from './routes/auth.route.js';
+dotenv.config({ path: './.env' });
 const app = express();
 app.use(express.json());
+
 const PORT = 3000;
 
 //routes
-app.use("/api/user", userRouter);
-app.use("/api/auth", authRouter);
+app.use('/api/user', userRouter);
+app.use('/api/auth', authRouter);
 
 //middlewares
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
-  const message = err.message || "internal server error";
+  const message = err.message || 'internal server error';
   return res.status(statusCode).json({
     success: false,
     statusCode,
@@ -28,9 +29,9 @@ app.use((err, req, res, next) => {
 mongoose
   .connect(`${process.env.MONGO_URL}`)
   .then(() => {
-    console.log("DB connected successfully");
+    console.log('DB connected successfully');
   })
-  .catch((error) => {
+  .catch(error => {
     console.log(`there was an error connectin to the db:`, error);
   });
 

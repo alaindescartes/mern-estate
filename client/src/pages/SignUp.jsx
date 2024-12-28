@@ -1,29 +1,30 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import OAuth from '../_components/OAuth.jsx';
 
 function SignUp() {
   const [formData, setFormData] = React.useState({
-    username: "",
-    email: "",
-    password: "",
+    username: '',
+    email: '',
+    password: '',
   });
   const [error, setError] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     try {
       setLoading(true);
-      const response = await fetch("/api/auth/signup", {
+      const response = await fetch('/api/auth/signup', {
         // withCredentials: true,
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
       const data = await response.json();
@@ -34,7 +35,7 @@ function SignUp() {
       }
       setLoading(false);
       setError(null);
-      navigate("/sign-in");
+      navigate('/sign-in');
       console.log(data);
     } catch (error) {
       setLoading(false);
@@ -71,12 +72,13 @@ function SignUp() {
           disabled={loading}
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
         >
-          {loading ? "Loading" : " Sign Up"}
+          {loading ? 'Loading' : ' Sign Up'}
         </button>
+        <OAuth />
       </form>
       <div className="flex gap-2 mt-5">
         <p>Have an account</p>
-        <Link to={"/sign-in"}>
+        <Link to={'/sign-in'}>
           <span className="text-blue-700">Sign in</span>
         </Link>
       </div>

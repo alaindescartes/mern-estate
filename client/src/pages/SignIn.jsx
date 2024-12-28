@@ -1,36 +1,33 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  signupStart,
-  signupFailure,
-  signupSuccess,
-} from "../redux/user/userSlice.js";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { signupStart, signupFailure, signupSuccess } from '../redux/user/userSlice.js';
+import OAuth from '../_components/OAuth.jsx';
 
 function SignIn() {
   const [formData, setFormData] = React.useState({
-    username: "",
-    email: "",
-    password: "",
+    username: '',
+    email: '',
+    password: '',
   });
 
   const dispatch = useDispatch();
-  const { error, loading } = useSelector((state) => state.user);
+  const { error, loading } = useSelector(state => state.user);
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     try {
       dispatch(signupStart());
-      const response = await fetch("/api/auth/signin", {
+      const response = await fetch('/api/auth/signin', {
         // withCredentials: true,
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
       const data = await response.json();
@@ -39,7 +36,7 @@ function SignIn() {
         return;
       }
       dispatch(signupSuccess(data));
-      navigate("/");
+      navigate('/');
       console.log(data);
     } catch (error) {
       dispatch(signupFailure(error.message));
@@ -68,12 +65,13 @@ function SignIn() {
           disabled={loading}
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
         >
-          {loading ? "Loading" : " Sign In"}
+          {loading ? 'Loading' : ' Sign In'}
         </button>
+        <OAuth />
       </form>
       <div className="flex gap-2 mt-5">
         <p>dont have an account</p>
-        <Link to={"/sign-up"}>
+        <Link to={'/sign-up'}>
           <span className="text-blue-700">Sign in</span>
         </Link>
       </div>
