@@ -1,11 +1,16 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import { error } from "console";
+import cors from "cors";
+import userRouter from "./routes/user.route";
 dotenv.config({ path: "./.env" });
 const app = express();
 const PORT = 3000;
 
+//routes
+app.use("/api/user", userRouter);
+
+//db config
 mongoose
   .connect(`${process.env.MONGO_URL}`)
   .then(() => {
