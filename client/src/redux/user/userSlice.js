@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   currentUser: null,
@@ -7,13 +7,14 @@ const initialState = {
 };
 
 const userSlice = createSlice({
-  name: "user",
+  name: 'user',
   initialState,
   reducers: {
-    signupStart: (state) => {
+    signupStart: state => {
       state.loading = true;
     },
     signupSuccess: (state, action) => {
+      console.log('received user', action.payload);
       state.loading = false;
       state.currentUser = action.payload;
     },

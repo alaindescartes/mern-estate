@@ -4,9 +4,7 @@ import { useSelector } from 'react-redux';
 
 function Header() {
   const currentUser = useSelector(state => state.user.currentUser);
-  // const defaultUserProfile =
-  //   'https://toppng.com/uploads/preview/file-svg-profile-icon-vector-11562942678pprjdh47a8.png';
-  console.log();
+
   return (
     <header className="bg-slate-200 shadow-md">
       <div className="flex justify-between items-center max-w-6xl mx-auto p-3">

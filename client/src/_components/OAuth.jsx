@@ -1,46 +1,63 @@
-import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth';
-import { app } from '../firebaseConfig.js';
+import {
+  GoogleAuthProvider,
+  getAuth,
+  signInWithPopup,
+  setPersistence,
+  browserLocalPersistence,
+} from 'firebase/auth';
 import { useDispatch } from 'react-redux';
-import { signupSuccess } from '../redux/user/userSlice.js';
+import { signupStart, signupSuccess, signupFailure } from '../redux/user/userSlice';
 import { useNavigate } from 'react-router-dom';
+import { app } from '../firebaseConfig.js';
 
 const OAuth = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const handleGoogleClick = async () => {
     try {
-      const provider = new GoogleAuthProvider();
-      const auth = getAuth(app);
+      // Indicate loading in your Redux state
+      dispatch(signupStart());
 
+      // Initialize Firebase Auth
+      const auth = getAuth(app);
+      const provider = new GoogleAuthProvider();
+
+      // 1. Set session persistence to local:
+      //    - This ensures the user remains logged in after a browser restart.
+      await setPersistence(auth, browserLocalPersistence);
+
+      // 2. Trigger Google Sign-In with a popup
       const result = await signInWithPopup(auth, provider);
-      const dataToSend = {
+
+      // 3. Extract user details from the sign-in result
+      const user = {
         name: result.user.displayName,
         email: result.user.email,
-        photo: result.user.photoURL,
+        avatar: result.user.photoURL,
+        id: result.user.uid,
       };
-      const res = await fetch('/api/auth/google', {
-        method: 'POST',
-        body: JSON.stringify(dataToSend),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
 
-      const data = await res.json();
-      dispatch(signupSuccess(data));
-      navigate('/');
+      // 4. Dispatch success action to store user data in Redux
+      dispatch(signupSuccess(user));
+
+      // 5. Navigate to a protected route (e.g., Profile page)
+      navigate('/profile');
     } catch (error) {
-      console.log('could not sign in with google', error);
+      console.error('Google sign-in failed:', error);
+      dispatch(signupFailure(error.message)); // Indicate failure in Redux
     }
   };
+
   return (
     <button
       type="button"
       onClick={handleGoogleClick}
       className="bg-red-700 text-white rounded-lg uppercase hover:opacity-95 p-3"
     >
-      continue with Google
+      Continue with Google
     </button>
   );
 };
+
 export default OAuth;

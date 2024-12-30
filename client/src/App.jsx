@@ -6,8 +6,38 @@ import Profile from './pages/Profile';
 import Header from './_components/Header';
 import About from './pages/About';
 import PrivateRoute from './_components/PrivateRoute.jsx';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { signupSuccess } from './redux/user/userSlice.js';
+import { app } from './firebaseConfig.js';
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const auth = getAuth(app);
+
+    // Listen for user state changes
+    const unsubscribe = onAuthStateChanged(auth, user => {
+      if (user) {
+        // Re-dispatch user data to Redux
+        dispatch(
+          signupSuccess({
+            name: user.displayName,
+            email: user.email,
+            avatar: user.photoURL,
+            id: user.uid,
+          }),
+        );
+      }
+    });
+
+    return () => {
+      // Clean up listener on unmount
+      unsubscribe();
+    };
+  }, [dispatch]);
   return (
     <BrowserRouter>
       <Header />
