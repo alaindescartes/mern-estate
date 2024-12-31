@@ -176,7 +176,7 @@ const CreateListing = () => {
         const data = await res.json();
         console.log('listing: ', data);
         setLoading(false);
-        navigate(`/listing/${data._id}`);
+        navigate(`/listings/${data._id}`);
         return;
       }
 
