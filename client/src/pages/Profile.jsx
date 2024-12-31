@@ -28,6 +28,8 @@ function Profile() {
   const [formData, setFormData] = useState({});
   const dispatch = useDispatch();
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [showListingError, setShowListingError] = useState(false);
+  const [userListings, setUserListings] = useState([]);
 
   async function handleFileUpload(selectedFile) {
     // Ensure Firebase user is available
@@ -188,6 +190,28 @@ function Profile() {
     }
   }
 
+  async function handleShowListings() {
+    try {
+      setShowListingError(false);
+      const res = await fetch(`/api/user/listings/${currentUser._id}`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+      if (res.status === 200) {
+        const data = await res.json();
+        setUserListings(data);
+        console.log(data);
+        setShowListingError(false);
+      }
+
+      if (!res.ok) {
+        setShowListingError(true);
+      }
+    } catch (error) {
+      setShowListingError(true);
+    }
+  }
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -267,6 +291,49 @@ function Profile() {
       <p className="text-sm text-green-700 mt-5">
         {updateSuccess ? 'User updated successfully' : ''}
       </p>
+      <button onClick={handleShowListings} className="text-green-700 w-full hover:text-green-950">
+        Show listings
+      </button>
+      <p className="text-sm text-red-700 mt-5">{showListingError ? 'Error showing listing' : ''}</p>
+      {userListings &&
+        userListings.length > 0 &&
+        userListings.map(listing => (
+          <div
+            key={listing._id}
+            className="flex items-center justify-between p-4 border rounded-lg shadow-md mb-4 hover:bg-gray-100 transition"
+          >
+            {/* Listing Image */}
+            <Link to={`/listing/${listing._id}`} className="flex items-center gap-4">
+              <img
+                src={listing.imageUrls[0]}
+                alt={listing.name}
+                className="w-20 h-20 object-cover rounded-lg"
+              />
+            </Link>
+
+            {/* Listing Info */}
+            <div className="flex-1 ml-4">
+              <Link to={`/listing/${listing._id}`}>
+                <h3 className="font-semibold text-lg hover:underline">{listing.name}</h3>
+              </Link>
+              <p className="text-gray-600 text-sm">{listing.address}</p>
+              <p className="text-gray-800 text-sm">
+                {listing.bedrooms} Beds | {listing.bathrooms} Baths | $
+                {listing.regularPrice.toLocaleString()}
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-2">
+              <button type="button" className="p-2 text-blue-700 hover:underline">
+                Edit
+              </button>
+              <button type="button" className="p-2 text-red-500 hover:underline">
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
     </div>
   );
 }
