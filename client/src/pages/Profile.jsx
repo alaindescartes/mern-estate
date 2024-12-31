@@ -17,6 +17,7 @@ import {
 } from '../redux/user/userSlice.js';
 import { clearFirebaseUser } from '../redux/firebaseUser/firebaseUserSlice.js';
 import { Link } from 'react-router-dom';
+import { list } from 'postcss';
 
 function Profile() {
   const { currentUser, loading, error } = useSelector(state => state.user);
@@ -212,6 +213,23 @@ function Profile() {
     }
   }
 
+  async function handleListingDeletion(_id) {
+    try {
+      const res = await fetch(`/api/listing/delete/${_id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      const data = await res.json();
+      if (res.status === 200) {
+        setUserListings(prev => prev.filter(listing => listing._id === _id));
+      } else {
+        console.log('Error deleting listing', data.message);
+      }
+    } catch (error) {
+      console.log('error when deleting listing', error);
+    }
+  }
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -328,7 +346,11 @@ function Profile() {
               <button type="button" className="p-2 text-blue-700 hover:underline">
                 Edit
               </button>
-              <button type="button" className="p-2 text-red-500 hover:underline">
+              <button
+                onClick={() => handleListingDeletion(listing._id)}
+                type="button"
+                className="p-2 text-red-500 hover:underline"
+              >
                 Delete
               </button>
             </div>
