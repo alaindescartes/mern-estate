@@ -18,6 +18,13 @@ app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/listing', listingsRouter);
 
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  }),
+);
+
 //middlewares
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
