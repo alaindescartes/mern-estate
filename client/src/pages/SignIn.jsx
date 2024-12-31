@@ -31,6 +31,7 @@ function SignIn() {
         body: JSON.stringify(formData),
       });
       const data = await response.json();
+
       if (data.success === false) {
         dispatch(signupFailure(data.message));
         return;

@@ -9,8 +9,8 @@ import PrivateRoute from './_components/PrivateRoute.jsx';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-import { signupSuccess } from './redux/user/userSlice.js';
 import { app } from './firebaseConfig.js';
+import { setFirebaseUser } from './redux/firebaseUser/firebaseUserSlice.js';
 
 function App() {
   const dispatch = useDispatch();
@@ -23,7 +23,7 @@ function App() {
       if (user) {
         // Re-dispatch user data to Redux
         dispatch(
-          signupSuccess({
+          setFirebaseUser({
             name: user.displayName,
             email: user.email,
             avatar: user.photoURL,

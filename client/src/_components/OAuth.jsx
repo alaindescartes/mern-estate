@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import { signupStart, signupSuccess, signupFailure } from '../redux/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 import { app } from '../firebaseConfig.js';
+import { setFirebaseUser } from '../redux/firebaseUser/firebaseUserSlice.js';
 
 const OAuth = () => {
   const dispatch = useDispatch();
@@ -38,14 +39,29 @@ const OAuth = () => {
         id: result.user.uid,
       };
 
+      const res = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: result.user.displayName,
+          email: result.user.email,
+          photoUrl: result.user.photoURL,
+        }),
+      });
+
+      const data = await res.json();
+
       // 4. Dispatch success action to store user data in Redux
-      dispatch(signupSuccess(user));
+      dispatch(signupSuccess(data));
+      dispatch(setFirebaseUser(user));
 
       // 5. Navigate to a protected route (e.g., Profile page)
       navigate('/profile');
     } catch (error) {
       console.error('Google sign-in failed:', error);
-      dispatch(signupFailure(error.message)); // Indicate failure in Redux
+      dispatch(signupFailure(error.message));
     }
   };
 

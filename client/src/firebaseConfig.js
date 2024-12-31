@@ -13,7 +13,7 @@ const firebaseConfig = {
   storageBucket: 'mern-estate-97bbc.firebasestorage.app',
   messagingSenderId: '791111985141',
   appId: '1:791111985141:web:75adc6e9b1b5e4351ea2bc',
-  measurementId: 'G-4RDK8VJWT0',
+  measurementId: 'G-27R2GBPRPG',
 };
 
 // Initialize Firebase
