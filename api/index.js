@@ -5,6 +5,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import userRouter from './routes/user.route.js';
 import authRouter from './routes/auth.route.js';
+import listingsRouter from './routes/listing.route.js';
 dotenv.config({ path: './.env' });
 const app = express();
 app.use(express.json());
@@ -15,6 +16,7 @@ const PORT = 3000;
 //routes
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/listing', listingsRouter);
 
 //middlewares
 app.use((err, req, res, next) => {
