@@ -10,6 +10,10 @@ import {
   deleteUserSuccess,
   deleteUserStart,
   deleteUserFailure,
+  signOutUserStart,
+  signupFailure,
+  signOutUserSuccess,
+  signOutUserFailure,
 } from '../redux/user/userSlice.js';
 import { clearFirebaseUser } from '../redux/firebaseUser/firebaseUserSlice.js';
 
@@ -163,6 +167,26 @@ function Profile() {
     }
   }
 
+  async function handleLogout() {
+    try {
+      dispatch(signOutUserStart());
+      const res = await fetch(`/api/auth/signout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        dispatch(signupFailure(errorData.message || 'An error occurred'));
+        return;
+      }
+      dispatch(signOutUserSuccess());
+      dispatch(clearFirebaseUser());
+    } catch (err) {
+      console.error('Logout error:', err);
+      dispatch(signOutUserFailure(err.message || 'Network error occurred'));
+    }
+  }
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -228,7 +252,9 @@ function Profile() {
         <span className="text-red-700 cursor-pointer" onClick={handleDeletion}>
           Delete Account
         </span>
-        <span className="text-red-700 cursor-pointer">Sign Out</span>
+        <span className="text-red-700 cursor-pointer" onClick={handleLogout}>
+          Sign Out
+        </span>
       </div>
       <p className="text-sm text-red-700 mt-5">{error ? error : ''}</p>
       <p className="text-sm text-green-700 mt-5">
