@@ -3,7 +3,15 @@ import { useEffect, useRef, useState } from 'react';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import imageCompression from 'browser-image-compression';
 import { app } from '../firebaseConfig.js';
-import { updateUserStart, updateUserSuccess, updateUserFailure } from '../redux/user/userSlice.js';
+import {
+  updateUserStart,
+  updateUserSuccess,
+  updateUserFailure,
+  deleteUserSuccess,
+  deleteUserStart,
+  deleteUserFailure,
+} from '../redux/user/userSlice.js';
+import { clearFirebaseUser } from '../redux/firebaseUser/firebaseUserSlice.js';
 
 function Profile() {
   const { currentUser, loading, error } = useSelector(state => state.user);
@@ -128,7 +136,33 @@ function Profile() {
       dispatch(updateUserFailure(error.message || 'Network error occurred'));
     }
   }
-  // console.log(currentUser);
+
+  async function handleDeletion() {
+    try {
+      dispatch(deleteUserStart());
+
+      // Make DELETE request to the backend
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: 'DELETE',
+      });
+
+      // Check for HTTP errors
+      if (!res.ok) {
+        const data = await res.json();
+        console.error('Error from server:', data.message);
+        dispatch(deleteUserFailure(data.message || 'An error occurred'));
+        return;
+      }
+
+      // If deletion is successful
+      dispatch(deleteUserSuccess());
+      dispatch(clearFirebaseUser());
+    } catch (error) {
+      console.error('Network or Other Error:', error);
+      dispatch(deleteUserFailure(error.message || 'Network error occurred'));
+    }
+  }
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -141,9 +175,10 @@ function Profile() {
           accept="image/*"
         />
         <img
-          className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
+          className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2 border-4 border-red-500"
           src={formData?.avatar || currentUser.avatar}
           alt="profile image"
+          key={formData?.avatar || currentUser.avatar}
           onClick={() => fileRef.current.click()}
         />
 
@@ -190,7 +225,9 @@ function Profile() {
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete Account</span>
+        <span className="text-red-700 cursor-pointer" onClick={handleDeletion}>
+          Delete Account
+        </span>
         <span className="text-red-700 cursor-pointer">Sign Out</span>
       </div>
       <p className="text-sm text-red-700 mt-5">{error ? error : ''}</p>
