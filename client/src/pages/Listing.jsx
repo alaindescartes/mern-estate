@@ -7,6 +7,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/bundle';
 import { FaBath, FaBed, FaChair, FaMapMarkerAlt, FaParking, FaShare } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
+import Contact from '../_components/Contact.jsx';
 
 const Listing = () => {
   const { listingId } = useParams();
@@ -145,11 +146,13 @@ const Listing = () => {
           {currentUser && listing.userRef !== currentUser._id && !contact && (
             <button
               onClick={() => setContact(true)}
-              className="bg-slate-700 text-white mt-4 rounded-lg uppercase hover:opacity-95 p-3"
+              className="bg-slate-700 w-full mt-8 text-white rounded-lg uppercase hover:opacity-95 p-3"
             >
-              Contact Landlord
+              Contact landlord
             </button>
           )}
+
+          {contact && <Contact listing={listing} />}
         </div>
       </main>
     )
