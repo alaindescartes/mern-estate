@@ -17,7 +17,7 @@ import {
 } from '../redux/user/userSlice.js';
 import { clearFirebaseUser } from '../redux/firebaseUser/firebaseUserSlice.js';
 import { Link } from 'react-router-dom';
-import { list } from 'postcss';
+import { useNavigate } from 'react-router-dom';
 
 function Profile() {
   const { currentUser, loading, error } = useSelector(state => state.user);
@@ -31,6 +31,7 @@ function Profile() {
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [showListingError, setShowListingError] = useState(false);
   const [userListings, setUserListings] = useState([]);
+  const navigate = useNavigate();
 
   async function handleFileUpload(selectedFile) {
     // Ensure Firebase user is available
@@ -230,6 +231,10 @@ function Profile() {
     }
   }
 
+  function handleUpdateRedirect(id) {
+    navigate(`/update-listing/${id}`);
+  }
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -343,7 +348,11 @@ function Profile() {
 
             {/* Actions */}
             <div className="flex gap-2">
-              <button type="button" className="p-2 text-blue-700 hover:underline">
+              <button
+                onClick={() => handleUpdateRedirect(listing._id)}
+                type="button"
+                className="p-2 text-blue-700 hover:underline"
+              >
                 Edit
               </button>
               <button

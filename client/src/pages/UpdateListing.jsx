@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { app } from '../firebaseConfig.js';
 import imageCompression from 'browser-image-compression';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const CreateListing = () => {
   const [files, setFiles] = useState([]);
@@ -27,6 +27,28 @@ const CreateListing = () => {
   const [loading, setLoading] = useState(false);
   const currentUser = useSelector(state => state.user.currentUser);
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch(`/api/listing/get/${id}`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+        const data = await res.json();
+        if (res.status === 200) {
+          setFormData(data);
+          return;
+        } else {
+          console.error(data.message);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchData();
+  }, [id]);
 
   function handleInputChange(event) {
     if (event.target.id === 'sale' || event.target.id === 'sale') {
@@ -159,8 +181,9 @@ const CreateListing = () => {
       }
       setLoading(true);
       setError(false);
+      const listingId = id.trim();
 
-      const res = await fetch('/api/listing/create', {
+      const res = await fetch(`/api/listing/update/ ${listingId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -197,7 +220,7 @@ const CreateListing = () => {
 
   return (
     <main className="p-3 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-semibold text-center my-7">Create a listing</h1>
+      <h1 className="text-3xl font-semibold text-center my-7">Update listing</h1>
       <form className="flex flex-col sm:flex-row gap-5" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-4 flex-1 ">
           <input
@@ -394,7 +417,7 @@ const CreateListing = () => {
             disabled={loading || uploading}
             className="uppercase p-3 bg-slate-700  text-white rounded-lg hover:opacity-95 disabled:opacity-80"
           >
-            {loading ? 'Creating listing...' : 'Create listing'}
+            {loading ? 'Updating listing...' : 'Update listing'}
           </button>
           <p className="text-sm text-red-700 text-center">{error ? error : ''}</p>
         </div>
