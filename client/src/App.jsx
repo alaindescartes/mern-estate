@@ -13,6 +13,7 @@ import { app } from './firebaseConfig.js';
 import { setFirebaseUser } from './redux/firebaseUser/firebaseUserSlice.js';
 import CreateListing from './pages/CreateListing.jsx';
 import UpdateListing from './pages/UpdateListing.jsx';
+import Listing from './pages/Listing.jsx';
 
 function App() {
   const dispatch = useDispatch();
@@ -48,6 +49,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/listing/:listingId" element={<Listing />} />
         <Route element={<PrivateRoute />}>
           <Route path="/profile" element={<Profile />} />
           <Route path="/create-listing" element={<CreateListing />} />
