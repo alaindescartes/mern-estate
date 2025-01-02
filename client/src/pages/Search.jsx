@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-//import ListingItem from '../components/ListingItem';
+import ListingItem from '../_components/ListingItem';
 
 export default function Search() {
   const navigate = useNavigate();
@@ -40,9 +40,9 @@ export default function Search() {
       setSidebardata({
         searchTerm: searchTermFromUrl || '',
         type: typeFromUrl || 'all',
-        parking: parkingFromUrl === 'true',
-        furnished: furnishedFromUrl === 'true',
-        offer: offerFromUrl === 'true',
+        parking: parkingFromUrl === 'true' ? true : false,
+        furnished: furnishedFromUrl === 'true' ? true : false,
+        offer: offerFromUrl === 'true' ? true : false,
         sort: sortFromUrl || 'created_at',
         order: orderFromUrl || 'desc',
       });
@@ -63,7 +63,7 @@ export default function Search() {
       setLoading(false);
     };
 
-    //fetchListings();
+    fetchListings();
   }, [location.search]);
 
   const handleChange = e => {
@@ -228,11 +228,9 @@ export default function Search() {
           )}
           {loading && <p className="text-xl text-slate-700 text-center w-full">Loading...</p>}
 
-          {/*{!loading &&*/}
-          {/*  listings &&*/}
-          {/*  listings.map((listing) => (*/}
-          {/*    <ListingItem key={listing._id} listing={listing} />*/}
-          {/*  ))}*/}
+          {!loading &&
+            listings &&
+            listings.map(listing => <ListingItem key={listing._id} listing={listing} />)}
 
           {showMore && (
             <button
