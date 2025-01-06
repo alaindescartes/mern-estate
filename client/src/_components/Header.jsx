@@ -26,44 +26,54 @@ function Header() {
   }, [location.search]); // Listen for changes to `location.search`
 
   return (
-    <header className="bg-slate-200 shadow-md">
-      <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
+    <header className="bg-gradient-to-r from-blue-500 to-blue-700 shadow-lg sticky top-0 z-50">
+      <div className="flex justify-between items-center max-w-6xl mx-auto p-4">
+        {/* Logo */}
         <Link to="/">
-          <h1 className="font-bold text-sm sm:text-xl flex flex-wrap">
-            <span className="text-slate-500">Demo</span>
-            <span className="text-slate-700">Estate</span>
+          <h1 className="font-extrabold text-xl sm:text-3xl flex items-baseline space-x-2 text-white">
+            <span>Demo</span>
+            <span className="text-yellow-300">Estate</span>
           </h1>
         </Link>
-        <form onSubmit={handleSubmit} className="bg-slate-100 p-3 rounded-lg flex items-center">
+
+        {/* Search Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="flex items-center bg-white rounded-lg shadow-md px-4 py-2"
+        >
           <input
             type="text"
-            placeholder="search..."
-            className="bg-transparent focus:outline-none w-24 sm:w-64"
+            placeholder="Search..."
+            className="bg-transparent focus:outline-none w-28 sm:w-64 text-sm text-gray-800"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
           />
-          <button>
-            <FaSearch className="text-slate-600 " />
+          <button className="ml-2">
+            <FaSearch className="text-blue-500 hover:text-blue-700 transition" />
           </button>
         </form>
-        <ul className="flex gap-4 ">
-          <Link to="/home">
-            <li className="hidden sm:inline text-slate-700 hover:underline">Home</li>
-          </Link>
 
+        {/* Navigation */}
+        <ul className="flex items-center gap-6">
+          <Link to="/">
+            <li className="hidden sm:inline text-white font-medium hover:text-yellow-300 transition">
+              Home
+            </li>
+          </Link>
           <Link to="/about">
-            <li className="hidden sm:inline text-slate-700 hover:underline">About</li>
+            <li className="hidden sm:inline text-white font-medium hover:text-yellow-300 transition">
+              About
+            </li>
           </Link>
-
           <Link to="/profile">
             {currentUser ? (
               <img
-                className="rounded-full h-7 w-7 object-cover"
+                className="rounded-full h-8 w-8 object-cover border-2 border-yellow-300 shadow-md"
                 src={currentUser?.avatar}
-                alt="user profile picture"
+                alt="User profile"
               />
             ) : (
-              <li className=" text-slate-700 hover:underline">Sign in</li>
+              <li className="text-white font-medium hover:text-yellow-300 transition">Sign in</li>
             )}
           </Link>
         </ul>
